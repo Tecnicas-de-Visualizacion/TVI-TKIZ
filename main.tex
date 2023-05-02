@@ -1,0 +1,167 @@
+\documentclass{article}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[english]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage{pgfplots}
+
+\title{Your Paper}
+\author{You}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Your abstract.
+\end{abstract}
+
+\section{Introducción}
+LaTeX es un sistema de composición tipográfica ampliamente utilizado en la producción de documentos científicos y técnicos debido a su capacidad para gestionar fórmulas matemáticas complejas y estructuras de documento de forma eficiente. Una de las características más potentes de LaTeX es su capacidad para crear gráficos y diagramas de alta calidad utilizando paquetes adicionales. TikZ es uno de estos paquetes y es especialmente popular debido a su flexibilidad y facilidad de uso.
+
+Esta colección de ejemplos de TikZ en LaTeX tiene como objetivo proporcionar a los usuarios una base sólida para aprender y aplicar TikZ en sus propios documentos. Los ejemplos presentados aquí cubren una amplia gama de técnicas y aplicaciones de TikZ, desde la creación de gráficos sencillos hasta la construcción de diagramas más avanzados y personalizados.
+
+\section{Line plot}
+Para generar un gráfico de líneas a partir de un archivo CSV en LaTeX utilizando TikZ, primero necesitarás el paquete pgfplots. pgfplots se basa en TikZ y es una herramienta poderosa para crear gráficos de datos en LaTeX. A continuación, se muestra un ejemplo de cómo hacer esto:
+
+% Crear el archivo datos.csv dentro del documento
+\begin{filecontents*}{datos.csv}
+x,y
+0,0
+1,2
+2,4
+3,6
+4,8
+\end{filecontents*}
+
+\pgfplotsset{compat=1.17}
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    xlabel={$x$},
+    ylabel={$y$},
+    grid=major,
+    legend entries={Datos},
+]
+
+\addplot table [x=x, y=y, col sep=comma] {datos.csv};
+\end{axis}
+\end{tikzpicture}
+\caption{Gráfico de líneas generado a partir de datos CSV.}
+\end{figure}
+\clearpage
+\section{Barplot}
+Este ejemplo utiliza el entorno filecontents para crear el archivo barras.csv directamente en el código fuente LaTeX. El comando \\addplot se utiliza para trazar los datos del archivo CSV en el diagrama de barras. Se han configurado varias opciones en el entorno axis para personalizar la apariencia del diagrama de barras.
+
+Si tienes un archivo CSV externo, simplemente elimina el entorno filecontents y asegúrate de que el archivo CSV esté en la misma carpeta que tu archivo .tex.
+% Crear el archivo barras.csv dentro del documento
+\begin{filecontents*}{barras.csv}
+categoria,valor
+A,3
+B,7
+C,5
+D,2
+\end{filecontents*}
+
+\pgfplotsset{compat=1.17}
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    ybar,
+    xlabel={Categorías},
+    ylabel={Valores},
+    symbolic x coords={A, B, C, D},
+    xtick=data,
+    nodes near coords,
+    nodes near coords align={vertical},
+    bar width=0.5cm,
+    ymin=0,
+    legend entries={Valores},
+]
+
+\addplot table [x=categoria, y=valor, col sep=comma] {barras.csv};
+\end{axis}
+\end{tikzpicture}
+\caption{Diagrama de barras generado a partir de datos CSV.}
+\end{figure}
+\clearpage
+
+\section{BoxPlot}
+
+
+Este ejemplo utiliza el entorno tikzpicture y axis para crear un boxplot con datos de tres grupos (Grupo A, Grupo B y Grupo C). Se configuran varias opciones en el entorno axis para personalizar la apariencia del boxplot. Los datos se proporcionan utilizando el estilo boxplot prepared, y se especifican los valores de los cuartiles, la mediana y los bigotes.
+
+Para usar datos de un archivo CSV, podrías leer los valores de los cuartiles, mediana y bigotes con \\pgfplotstableread y luego asignarlos a las opciones de boxplot prepared. Sin embargo, la lectura de datos directamente de un archivo CSV para un boxplot no es tan sencilla como en el caso de gráficos de líneas o diagramas de barras, ya que el formato de los datos en el archivo CSV debe coincidir con las expectativas de la biblioteca statistics de pgfplots. Por lo tanto, te recomendaría preparar y calcular previamente los valores necesarios para tu boxplot y luego proporcionarlos en el estilo boxplot prepared como se muestra en el ejemplo.
+
+\usepgfplotslibrary{statistics}
+
+\pgfplotsset{compat=1.17}
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    boxplot/draw direction=y,
+    ylabel={Valores},
+    xtick={1, 2, 3},
+    xticklabels={Grupo A, Grupo B, Grupo C},
+    xmin=0.5,
+    xmax=3.5,
+    boxplot/width=0.5cm,
+    boxplot/box extend=0.25,
+    boxplot/whisker extend=0.25,
+]
+% Datos del Grupo A
+\addplot+[
+    boxplot prepared={
+        lower whisker=1,
+        lower quartile=3,
+        median=4,
+        upper quartile=5,
+        upper whisker=6,
+    },
+] coordinates {};
+
+% Datos del Grupo B
+\addplot+[
+    boxplot prepared={
+        lower whisker=2,
+        lower quartile=4,
+        median=6,
+        upper quartile=8,
+        upper whisker=9,
+    },
+] coordinates {};
+
+% Datos del Grupo C
+\addplot+[
+    boxplot prepared={
+        lower whisker=1,
+        lower quartile=2,
+        median=3,
+        upper quartile=5,
+        upper whisker=7,
+    },
+] coordinates {};
+
+\end{axis}
+\end{tikzpicture}
+\caption{Diagrama de caja (boxplot) en LaTeX con TikZ y pgfplots.}
+\end{figure}
+
+\end{document}
+\bibliographystyle{alpha}
+\bibliography{sample}
+
+\end{document}
